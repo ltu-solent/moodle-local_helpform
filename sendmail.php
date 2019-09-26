@@ -8,7 +8,16 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_title("Send Mail");
 $PAGE->set_heading("Send Mail");
 $PAGE->set_url($CFG->wwwroot .'/local/helpform/sendmail.php');
+
 echo $OUTPUT->header();
+
+if (isguestuser()) {
+	echo $OUTPUT->notification('The Help Form requires you to be logged in before sending a message.');
+				// $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).
+	echo $OUTPUT->footer();
+	die();
+}
+
 	//SEND MYCOURSE EMAIL
 $timesent =  date('l jS \of F Y h:i:s A');
 $Name = $USER->username; //senders name
@@ -55,24 +64,24 @@ if($sendwho == 'turnitin.help@solent.ac.uk'){
 	"Unit: " . $coursename . "\r\n" .
 	"Tutor: " . $tutorname . "\r\n" .
 	"Assignment: " . $assignmentname . "\r\n" .
-	"Last page viewed: " . $refpage . "\r\n" .  
+	"Last page viewed: " . $refpage . "\r\n" .
 	"Name: ". $USER->firstname . " " . $USER->lastname . "\r\n" .
 	"Username: " . $USER->username . "\r\n" .
 	"Department: " . $USER->department . "\r\n" .
 	"Email: " . $USER->email . "\r\n" .
 	"Tel: " . $USER->phone1;
 	$mailbody2 = "This is confirmation that the following email has been sent by you to $recipient \r\n\n" . $message;
-	
+
 	$Fullname = $USER->firstname . " " . $USER->lastname; //senders name
-	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields  
-	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields  
+	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
+	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
 }elseif($sendwho == $tutoremail){
 	$recipient = $sendwho;
 	$recipient2 = $USER->email;
 	$subject = "Request for tutor help from turnitin"; //subject
 	$message = $_REQUEST['message'];
 	$mailbody = $message . "\r\n\n" .
-  
+
 	"Information regarding request for help:\r\n" .
 	"Time Sent: ". $timesent . "\r\n" .
 	"Unit: " . $coursename . "\r\n" .
@@ -87,8 +96,8 @@ if($sendwho == 'turnitin.help@solent.ac.uk'){
 	$mailbody2 = "This is confirmation that the following email has been sent by you to $recipient \r\n\n" . $message;
 	$Fullname = $USER->firstname . " " . $USER->lastname; //senders name
 	// Additional headers
-	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields 
-	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields  
+	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
+	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
 	$header .= 'To: '.$tutorname.'<'.$tutoremail.'>' . "\r\n";
 	$header .= 'Bcc: turnitin.help@solent.ac.uk' . "\r\n";
 
@@ -106,27 +115,27 @@ if($sendwho == 'turnitin.help@solent.ac.uk'){
 	"Department: " . $USER->department . "\r\n" .
 	"Email: " . $USER->email . "\r\n" .
 	"Tel: ". $USER->phone1;
-	$mailbody2 = "This is confirmation that the following email has been sent by you to $recipient \r\n\n" . $message; 
+	$mailbody2 = "This is confirmation that the following email has been sent by you to $recipient \r\n\n" . $message;
 
 	$Fullname = $USER->firstname . " " . $USER->lastname; //senders name
-	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields  
-	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields  
+	$header = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
+	$header2 = "From: ". $Name . " <" . $email . ">\r\n"; //optional headerfields
 }
 
 //SEND MYCOURSE EMAIL
 
 mail($recipient, $subject, $mailbody, $header);
 mail($recipient2, $subject, $mailbody2, $header2);
-//mail command :) 
+//mail command :)
 
 echo '<style> #page-content{padding-top:20px;}</style>';
-echo '<div style = "width:300px; height:60px;margin-right: auto; margin-left:auto;" margin-top:100px;>Thankyou for your message '. $Fullname .'.<br>
+echo '<div style = "width:300px; height:60px;margin-right: auto; margin-left:auto;" margin-top:100px;>Thank you for your message '. $Fullname .'.<br>
 	  An email has been sent to '. $recipient .'</div>
 	  <div style = "width:300px; height:60px;margin-right: auto; margin-left:auto;">';
 	  if($refpage == $CFG->dirroot .'/local/helpform/helpform.php'){
 		echo '<a href="' . $CFG->dirroot .'/my">Click here</a> to return to the homepage</div>';
 	  }else{
-		echo '<a href="' . $refpage . '">Click here</a> to return to the page you were viewing </div>'; 
+		echo '<a href="' . $refpage . '">Click here</a> to return to the page you were viewing </div>';
 	  }
   //put in your normal moodle footer:
 echo $OUTPUT->footer();
